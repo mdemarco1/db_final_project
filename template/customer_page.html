@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Search</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label { display: block; margin-bottom: 8px; }
+        input, button { padding: 8px; margin-bottom: 16px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h1>Sportswear Database</h1>
+
+
+    <section>
+        <h2>Search Customers Information</h2>
+        <label for="customer-name">Customer Name:</label>
+        <input type="text" id="customer-name" placeholder="Enter name">
+        <button onclick="searchCustomer()">Search</button>
+        <table id="customer-results">
+            <thead>
+                <tr>
+                    <th>UserID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Method</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+
+    <section>
+        <h2>Search Products Information</h2>
+        <label for="product-type">Product Type:</label>
+        <input type="text" id="product-type" placeholder="Enter type">
+        <button onclick="searchProduct()">Search</button>
+        <table id="product-results">
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>ProductID</th>
+                    <th>Type</th>
+                    <th>Price</th>
+                    <th>Gender</th>
+                    <th>Shipping Address</th>
+                    <th>Brand</th>
+                    <th>Size</th>
+                    <th>Color</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Add New Customer</h2>
+        <form id="customerForm" onsubmit="event.preventDefault(); insertCustomer();">
+            <label for="customerName">Name:</label>
+            <input type="text" id="customerName" placeholder="Enter customer name" required>
+            <br>
+            <label for="customerEmail">Email:</label>
+            <input type="email" id="customerEmail" placeholder="Enter customer email" required>
+            <br>
+            <label for="customerPhone">Phone:</label>
+            <input type="text" id="customerPhone" placeholder="Enter customer phone" required>
+            <br>
+            <button type="submit">Add Customer</button>
+        </form>
+    </section>
+
+    
+
+    <script>
+        
+        function searchCustomer() {
+            const name = document.getElementById('customer-name').value;
+            fetch(`/search/customer?name=${name}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector('#customer-results tbody');
+                    tableBody.innerHTML = ''; // Clear existing rows
+                    data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        row.forEach(cell => {
+                            const td = document.createElement('td');
+                            td.textContent = cell;
+                            tr.appendChild(td);
+                        });
+                        tableBody.appendChild(tr);
+                    });
+                });
+        }
+
+    
+        function searchProduct() {
+            const type = document.getElementById('product-type').value;
+            fetch(`/search/product?type=${type}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector('#product-results tbody');
+                    tableBody.innerHTML = ''; // Clear existing rows
+                    data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        row.forEach(cell => {
+                            const td = document.createElement('td');
+                            td.textContent = cell;
+                            tr.appendChild(td);
+                        });
+                        tableBody.appendChild(tr);
+                    });
+                });
+        }
+        function insertCustomer() {
+            // Get values from the form
+            const name = document.getElementById("customerName").value;
+            const email = document.getElementById("customerEmail").value;
+            const phone = document.getElementById("customerPhone").value;
+
+            // Validate inputs
+            if (!name || !email || !phone) {
+                alert("Please fill all fields correctly.");
+                return;
+            }
+
+            // Send data to backend
+            fetch('/insert/customer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    phone: phone
+                })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to insert customer");
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message); // Show success message
+                // Optionally, clear the form
+                document.getElementById("customerForm").reset();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Failed to insert customer. Please try again.");
+            });
+        }
+    </script>
+</body>
+</html>
