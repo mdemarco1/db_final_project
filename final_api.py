@@ -6,8 +6,8 @@ import cx_Oracle
 app = Flask(__name__, template_folder='template')
 CORS(app)
 
-username = 'mdemarc2'
-Password = 'Fa02404090'
+username = 'USERNAME_to_oracle'
+Password = 'PASSWORD_to_oracle'
 intstant_client_dir="path_to_instant_client"
 
 # init oracle client
