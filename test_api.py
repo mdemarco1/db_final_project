@@ -11,7 +11,7 @@ dsn = cx_Oracle.makedsn("csdb.csc.Villanova.edu", 1521, sid="orcl")
 # connect to db user, pswd, connection
 
 try: 
-    connection = cx_Oracle.connect('mdemarc2', 'Fa02404090', dsn, encoding="UTF-8")
+    connection = cx_Oracle.connect('INSERT_USERNAME', 'INSERT_PASSWORD', dsn, encoding="UTF-8")
     print("connection successful!")
     cursor = connection.cursor()
     # practice queries!!!! #
